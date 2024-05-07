@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "test-elvis"
+version = "0.1.0"
+description = "Тестовое задание для АО НПЦ Элвис."
+authors = ["SivikGosh"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.111.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
