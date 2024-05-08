@@ -19,5 +19,10 @@
 ### Запуск приложения
 
 ```bash
-uvicorn main:app --reload
+uvicorn src.main:app --reload
 ```
+
+### API
+
+http://127.0.0.1:8000/redoc/
+http://127.0.0.1:8000/docs/
