@@ -42,21 +42,14 @@ def get_user(id: int, db: Session = Depends(get_db)):
 
 @app.get('/users/rewardest/', response_model=schemas.RewardestUser)
 def get_rewardest_user(db: Session = Depends(get_db)):
-    rewardest = (
-        db.query(models.RewardUser.user, func.count(models.RewardUser.reward))
-        .group_by(models.RewardUser.user)
-        .order_by(func.count(models.RewardUser.reward).desc())
-        .first()
-    )
-    user, rewards = rewardest
+    user, rewards = crud.get_rewardest_user(db=db)
     return {'user': user, 'rewards': rewards}
 
 
-# @app.get('/users/max_scores')
-# def get_user_with_max_scores():
-#     """Пользователь с максимальным количеством баллов."""
-
-#     return {}
+@app.get('/users/max_scores/', response_model=schemas.MaxScoreUser)
+def get_user_with_max_scores(db: Session = Depends(get_db)):
+    user, scores = crud.get_user_with_max_scores(db=db)
+    return {'user': user, 'scores': scores}
 
 
 # @app.get('/users/most_difference')

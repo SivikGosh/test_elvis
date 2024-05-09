@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from src import models, schemas
-# from sqlalchemy import func
+from sqlalchemy import func
 
 
 def add_user(db: Session, user: schemas.UserAdd):
@@ -39,4 +39,24 @@ def reward_user(db: Session, rewarding: schemas.RewardUserAdd):
 
 
 def get_rewardest_user(db: Session):
-    pass
+    rewardest = (
+        db.query(models.RewardUser.user, func.count(models.RewardUser.reward))
+        .group_by(models.RewardUser.user)
+        .order_by(func.count(models.RewardUser.reward).desc())
+        .first()
+    )
+    user, rewards = rewardest
+    return user, rewards
+
+
+def get_user_with_max_scores(db: Session):
+    max_scores = (
+        db.query(models.RewardUser.user, func.sum(models.Reward.score))
+        .join(models.Reward, models.RewardUser.reward == models.Reward.id)
+        .group_by(models.RewardUser.user)
+        .order_by(func.sum(models.Reward.score).desc())
+        .first()
+    )
+    user, scores = max_scores
+    user = db.query(models.User).filter(models.User.id == user).first()
+    return user, scores

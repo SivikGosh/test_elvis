@@ -47,17 +47,23 @@ class RewardGet(RewardBase):
 
 class RewardUserBase(BaseModel):
     user: int
+    reward: int
 
 
 class RewardUserAdd(RewardUserBase):
-    reward: int
+    pass
 
 
 class RewardUserGet(RewardUserBase):
     id: int
-    reward: int
     gave_at: datetime
 
 
-class RewardestUser(RewardUserBase):
-    rewards: Optional[int]
+class RewardestUser(BaseModel):
+    user: UserGet
+    rewards: int
+
+
+class MaxScoreUser(BaseModel):
+    user: UserGet
+    scores: int
