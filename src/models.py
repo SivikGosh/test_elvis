@@ -1,17 +1,8 @@
 from datetime import datetime
-from sqlalchemy import (
-    Column, DateTime, Enum, ForeignKey, Integer, String, Table
-)
+
+from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, String
 
 from src.database import Base
-
-user_chievement = Table(
-    'user_achievement',
-    Base.metadata,
-    Column('user', Integer, ForeignKey('users.id')),
-    Column('achievement', Integer, ForeignKey('achievements.id')),
-    Column('rewarded_at', DateTime, default=datetime.now)
-)
 
 
 class User(Base):
@@ -22,10 +13,19 @@ class User(Base):
     language = Column(Enum('russian', 'english', name='language'))
 
 
-class Achievement(Base):
-    __tablename__ = 'achievements'
+class Reward(Base):
+    __tablename__ = 'rewards'
 
     id = Column(Integer, primary_key=True)
     title = Column(String, unique=True, index=True)
     score = Column(Integer)
     description = Column(String)
+
+
+class RewardUser(Base):
+    __tablename__ = 'rewardings'
+
+    id = Column(Integer, primary_key=True)
+    user = Column(Integer, ForeignKey('users.id'))
+    reward = Column(Integer, ForeignKey('rewards.id'))
+    gave_at = Column(DateTime, default=datetime.now)

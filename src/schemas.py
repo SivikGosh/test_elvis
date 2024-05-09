@@ -1,4 +1,7 @@
+from datetime import datetime
 from enum import Enum
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -25,18 +28,36 @@ class UserGet(UserBase):
         from_attributes = True
 
 
-class AchievementBase(BaseModel):
+class RewardBase(BaseModel):
     title: str
     score: int
     description: str
 
 
-class AchievementAdd(AchievementBase):
+class RewardAdd(RewardBase):
     pass
 
 
-class AchievementGet(AchievementBase):
+class RewardGet(RewardBase):
     id: int
 
     class Config:
         from_attributes = True
+
+
+class RewardUserBase(BaseModel):
+    user: int
+
+
+class RewardUserAdd(RewardUserBase):
+    reward: int
+
+
+class RewardUserGet(RewardUserBase):
+    id: int
+    reward: int
+    gave_at: datetime
+
+
+class RewardestUser(RewardUserBase):
+    rewards: Optional[int]

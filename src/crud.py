@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from src import models, schemas
+# from sqlalchemy import func
 
 
 def add_user(db: Session, user: schemas.UserAdd):
@@ -15,21 +16,27 @@ def get_user(db: Session, id: int):
     return db.query(models.User).filter(models.User.id == id).first()
 
 
-def add_achievement(db: Session, achievement: schemas.AchievementAdd):
-    achievement = models.Achievement(
-        title=achievement.title,
-        score=achievement.score,
-        description=achievement.description
+def add_reward(db: Session, reward: schemas.RewardAdd):
+    reward = models.Reward(
+        title=reward.title, score=reward.score, description=reward.description
     )
-    db.add(achievement)
+    db.add(reward)
     db.commit()
-    db.refresh(achievement)
-    return achievement
+    db.refresh(reward)
+    return reward
 
 
-def get_achievement(db: Session, id: int):
-    return (
-        db.query(models.Achievement)
-        .filter(models.Achievement.id == id)
-        .first()
-    )
+def get_reward(db: Session, id: int):
+    return db.query(models.Reward).filter(models.Reward.id == id).first()
+
+
+def reward_user(db: Session, rewarding: schemas.RewardUserAdd):
+    rewarding = models.RewardUser(user=rewarding.user, reward=rewarding.reward)
+    db.add(rewarding)
+    db.commit()
+    db.refresh(rewarding)
+    return rewarding
+
+
+def get_rewardest_user(db: Session):
+    pass
