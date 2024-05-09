@@ -1,0 +1,4 @@
+alembic.ini text eol=lf
+alembic/env.py text eol=lf
+alembic/script.py.mako text eol=lf
+alembic/versions/54e5ec338bf6_initial_migration.py text eol=lf
