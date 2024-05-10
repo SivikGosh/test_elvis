@@ -1,7 +1,6 @@
 from http import HTTPStatus
 
 from fastapi import Depends, FastAPI, HTTPException
-from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from src import crud, models, schemas
@@ -82,6 +81,13 @@ def get_users_with_less_difference(db: Session = Depends(get_db)):
         'second_user_scores': second_user_scores,
         'difference': difference
     }
+
+
+# TODO
+@app.get('/users/rewarded_for_week/', response_model=list[schemas.UserGet])
+def get_users_rewarded_for_week(db: Session = Depends(get_db)):
+    user = crud.get_users_rewarded_for_week(db=db)
+    return user
 
 
 # @app.get('/users/{id}/achievements')

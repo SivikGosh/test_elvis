@@ -1,6 +1,5 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -83,3 +82,7 @@ class LessDifference(BaseModel):
     second_user: UserGet
     second_user_scores: int
     difference: int
+
+
+class Test(BaseModel):  # for reward for week
+    user: UserGet

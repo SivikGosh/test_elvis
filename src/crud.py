@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from src import models, schemas
 from sqlalchemy import func
+from datetime import timedelta
 
 
 def add_user(db: Session, user: schemas.UserAdd):
@@ -107,3 +108,28 @@ def get_users_with_less_difference(db: Session):
         second_user_scores,
         difference
     )
+
+
+def get_users_rewarded_for_week(db: Session):
+    query = (
+        db.query(
+            models.RewardUser.user,
+            func.array_agg(func.DATE(models.RewardUser.gave_at).distinct())
+        )
+        .group_by(models.RewardUser.user)
+        .all()
+    )
+    users = []
+    for user, dates in query:
+        count = 1
+        for i in range(1, len(dates)):
+            if dates[i] - dates[i-1] != timedelta(days=1):
+                count = 1
+            else:
+                count += 1
+            if count >= 7:
+                break
+        if count >= 7:
+            user = db.query(models.User).filter(models.User.id == user).first()
+            users.append(user)
+    return users
