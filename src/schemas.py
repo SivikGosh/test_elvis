@@ -67,3 +67,11 @@ class RewardestUser(BaseModel):
 class MaxScoreUser(BaseModel):
     user: UserGet
     scores: int
+
+
+class MostDifference(BaseModel):
+    user_max: UserGet
+    user_max_score: int
+    user_min: UserGet
+    user_min_score: int
+    difference: int

@@ -52,11 +52,18 @@ def get_user_with_max_scores(db: Session = Depends(get_db)):
     return {'user': user, 'scores': scores}
 
 
-# @app.get('/users/most_difference')
-# def get_users_with_most_difference():
-#     """Пользователи с наибольшей разницей очков."""
-
-#     return []
+@app.get('/users/most_difference/', response_model=schemas.MostDifference)
+def get_users_with_most_difference(db: Session = Depends(get_db)):
+    user_max, score_max, user_min, score_min, difference = (
+        crud.get_users_with_most_difference(db=db)
+    )
+    return {
+        'user_max': user_max,
+        'user_max_score': score_max,
+        'user_min': user_min,
+        'user_min_score': score_min,
+        'difference': difference
+    }
 
 
 # @app.get('/users/less_difference')

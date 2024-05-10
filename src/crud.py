@@ -46,6 +46,7 @@ def get_rewardest_user(db: Session):
         .first()
     )
     user, rewards = rewardest
+    user = db.query(models.User).filter(models.User.id == user).first()
     return user, rewards
 
 
@@ -60,3 +61,23 @@ def get_user_with_max_scores(db: Session):
     user, scores = max_scores
     user = db.query(models.User).filter(models.User.id == user).first()
     return user, scores
+
+
+def get_user_with_min_scores(db: Session):
+    min_scores = (
+        db.query(models.RewardUser.user, func.sum(models.Reward.score))
+        .join(models.Reward, models.RewardUser.reward == models.Reward.id)
+        .group_by(models.RewardUser.user)
+        .order_by(func.sum(models.Reward.score).asc())
+        .first()
+    )
+    user, scores = min_scores
+    user = db.query(models.User).filter(models.User.id == user).first()
+    return user, scores
+
+
+def get_users_with_most_difference(db: Session):
+    user_max, score_max = get_user_with_max_scores(db)
+    user_min, score_min = get_user_with_min_scores(db)
+    difference = score_max - score_min
+    return user_max, score_max, user_min, score_min, difference
