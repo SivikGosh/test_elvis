@@ -66,11 +66,22 @@ def get_users_with_most_difference(db: Session = Depends(get_db)):
     }
 
 
-# @app.get('/users/less_difference')
-# def get_users_with_less_difference():
-#     """Пользователи с наименьшей разницей очков."""
-
-#     return []
+@app.get('/users/less_difference/', response_model=schemas.LessDifference)
+def get_users_with_less_difference(db: Session = Depends(get_db)):
+    (
+        first_user,
+        first_user_scores,
+        second_user,
+        second_user_scores,
+        difference
+    ) = crud.get_users_with_less_difference(db=db)
+    return {
+        'first_user': first_user,
+        'first_user_scores': first_user_scores,
+        'second_user': second_user,
+        'second_user_scores': second_user_scores,
+        'difference': difference
+    }
 
 
 # @app.get('/users/{id}/achievements')

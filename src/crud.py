@@ -81,3 +81,29 @@ def get_users_with_most_difference(db: Session):
     user_min, score_min = get_user_with_min_scores(db)
     difference = score_max - score_min
     return user_max, score_max, user_min, score_min, difference
+
+
+def get_users_with_less_difference(db: Session):
+    users = (
+        db.query(models.RewardUser.user, func.sum(models.Reward.score))
+        .join(models.Reward, models.RewardUser.reward == models.Reward.id)
+        .group_by(models.RewardUser.user)
+        .order_by(func.sum(models.Reward.score).desc())
+        .limit(2)
+    )
+    first_user, first_user_scores = users.first()
+    second_user, second_user_scores = users.offset(1).first()
+    difference = first_user_scores - second_user_scores
+    first_user = (
+        db.query(models.User).filter(models.User.id == first_user).first()
+    )
+    second_user = (
+        db.query(models.User).filter(models.User.id == second_user).first()
+    )
+    return (
+        first_user,
+        first_user_scores,
+        second_user,
+        second_user_scores,
+        difference
+    )

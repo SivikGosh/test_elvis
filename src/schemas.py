@@ -75,3 +75,11 @@ class MostDifference(BaseModel):
     user_min: UserGet
     user_min_score: int
     difference: int
+
+
+class LessDifference(BaseModel):
+    first_user: UserGet
+    first_user_scores: int
+    second_user: UserGet
+    second_user_scores: int
+    difference: int
