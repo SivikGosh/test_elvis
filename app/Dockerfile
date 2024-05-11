@@ -6,4 +6,4 @@ RUN pip3 install poetry
 RUN poetry config virtualenvs.create false
 RUN poetry install
 COPY . .
-CMD gunicorn -k uvicorn.workers.UvicornWorker --worker-tmp-dir /dev/shm --log-level debug main:app --bind=0.0.0.0:7000
+CMD gunicorn -k uvicorn.workers.UvicornWorker --worker-tmp-dir /dev/shm --log-level debug src.main:app --bind=0.0.0.0:7000
