@@ -12,7 +12,7 @@ app = FastAPI()
 
 @app.get('/')
 def get_root():
-    return RedirectResponse('/docs/')
+    return RedirectResponse(url=app.docs_url)
 
 
 app.include_router(users.router, prefix='/users', tags=['Пользователи'])
