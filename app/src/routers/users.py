@@ -33,7 +33,8 @@ def get_user(id: int, db: Session = Depends(get_db)):
     user = crud.get_user(db=db, id=id)
     if user is None:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail='Пользователь не найден.'
+            status_code=HTTPStatus.NOT_FOUND,
+            detail='Пользователь не найден.'
         )
     return user
 
