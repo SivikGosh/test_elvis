@@ -491,6 +491,16 @@ files = [
 ]
 
 [[package]]
+name = "mtranslate"
+version = "1.8"
+description = "Google translate console script with easy to use API"
+optional = false
+python-versions = "*"
+files = [
+    {file = "mtranslate-1.8.tar.gz", hash = "sha256:034f8b4cd0bb96efbb4e4d5935e2d0a45a46dadf567d60bc200d77440bba5e0c"},
+]
+
+[[package]]
 name = "orjson"
 version = "3.10.3"
 description = "Fast, correct Python JSON library supporting dataclasses, datetimes, and numpy"
@@ -1324,4 +1334,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "f18ffea4c89165834257899dfd26caa0333881ea443920b557f4333b6405896b"
+content-hash = "dd08dc2a954002ecbfd06c8a135357d9e891fa3e842f2a33040743634b2dda81"

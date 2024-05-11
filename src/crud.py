@@ -1,8 +1,10 @@
+from datetime import timedelta
+
+from sqlalchemy import func
 from sqlalchemy.orm import Session
+import mtranslate
 
 from src import models, schemas
-from sqlalchemy import func
-from datetime import timedelta
 
 
 def add_user(db: Session, user: schemas.UserAdd):
@@ -127,9 +129,22 @@ def get_users_rewarded_for_week(db: Session):
                 count = 1
             else:
                 count += 1
-            if count >= 7:
+            if count == 7:
                 break
         if count >= 7:
             user = db.query(models.User).filter(models.User.id == user).first()
             users.append(user)
     return users
+
+
+def get_user_rewards(db: Session, id: int):
+    query = (
+        db.query(models.Reward)
+        .join(models.RewardUser, models.RewardUser.reward == models.Reward.id)
+        .filter(models.RewardUser.user == id).all()
+    )
+    lang = db.query(models.User.language).filter(models.User.id == id).first()
+    for i in query:
+        i.title = mtranslate.translate(i.title, lang[0])
+        i.description = mtranslate.translate(i.description, lang[0])
+    return query

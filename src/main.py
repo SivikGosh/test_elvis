@@ -83,17 +83,22 @@ def get_users_with_less_difference(db: Session = Depends(get_db)):
     }
 
 
-# TODO
 @app.get('/users/rewarded_for_week/', response_model=list[schemas.UserGet])
 def get_users_rewarded_for_week(db: Session = Depends(get_db)):
-    user = crud.get_users_rewarded_for_week(db=db)
+    rewards = crud.get_users_rewarded_for_week(db=db)
+    return rewards
+
+
+@app.get('/users/{id}/rewards/', response_model=list[schemas.RewardGet])
+def get_user_rewards(id: int, db: Session = Depends(get_db)):
+    user = crud.get_user(db=db, id=id)
+    if user is None:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail='Пользователь не найден.'
+        )
+    else:
+        user = crud.get_user_rewards(db=db, id=id)
     return user
-
-
-# @app.get('/users/{id}/achievements')
-# def get_user_rewards():
-
-#     return []
 
 
 @app.post('/rewards/', response_model=schemas.RewardAdd)

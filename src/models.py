@@ -10,7 +10,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True, index=True)
-    language = Column(Enum('russian', 'english', name='language'))
+    language = Column(Enum('ru', 'en', name='language'))
 
 
 class Reward(Base):

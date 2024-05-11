@@ -5,8 +5,8 @@ from pydantic import BaseModel
 
 
 class Language(str, Enum):
-    russian = 'russian'
-    english = 'english'
+    ru = 'ru'
+    en = 'en'
 
 
 class UserBase(BaseModel):
@@ -84,5 +84,6 @@ class LessDifference(BaseModel):
     difference: int
 
 
-class Test(BaseModel):  # for reward for week
+class UserRewardsGet(BaseModel):
     user: UserGet
+    rewards: list[RewardGet]
