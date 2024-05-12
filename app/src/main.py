@@ -3,14 +3,8 @@ from fastapi.responses import RedirectResponse
 
 from src import models
 from src.database import engine
-from src.routers import users, rewards
-import logging
-
-logger = logging.basicConfig(
-    'logs.txt',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+from src.logger import logger
+from src.routers import rewards, users
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -19,6 +13,7 @@ app = FastAPI()
 
 @app.get('/')
 def get_root():
+    logger.info('redirect...')
     return RedirectResponse(url=app.docs_url)
 
 

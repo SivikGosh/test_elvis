@@ -3,7 +3,9 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from src import crud
+from src.config import SECRET
 from src.dependencies import get_db
+from src.logger import logger
 from src.models import User
 from src.schemas import (
     LessDifference,
@@ -14,7 +16,6 @@ from src.schemas import (
     UserAdd,
     UserGet,
 )
-from src.config import SECRET
 
 router = APIRouter()
 
@@ -25,10 +26,13 @@ def add_user(user: UserAdd, db: Session = Depends(get_db), secret: str = None):
     """Добавить пользователя."""
 
     if secret != SECRET:
+        logger.warning('Введён неправильный секретный ключ.')
         raise HTTPException(
             status_code=HTTPStatus.FORBIDDEN,
             detail='Секретный ключ неверный.'
         )
+
+    logger.info('Добавление пользователя.')
 
     return crud.add_user(db=db, user=user)
 
@@ -37,6 +41,8 @@ def add_user(user: UserAdd, db: Session = Depends(get_db), secret: str = None):
 def get_users(db: Session = Depends(get_db)):
 
     """Получить список пользователей."""
+
+    logger.info('Запрошен чписок пользователей.')
 
     return db.query(User).all()
 
@@ -49,10 +55,13 @@ def get_user(id: int, db: Session = Depends(get_db)):
     user = crud.get_user(db=db, id=id)
 
     if user is None:
+        logger.info('Запрошен несуществующий пользователь.')
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
             detail='Пользователь не найден.'
         )
+
+    logger.info(f'Запрошена информация о пользователе {user.name}.')
 
     return user
 
@@ -62,6 +71,8 @@ def get_rewardest_user(db: Session = Depends(get_db)):
 
     """Получить пользователя с наибольшим количеством достижений."""
 
+    logger.info('Запрос лидера по достижениям.')
+
     return crud.get_rewardest_user(db=db)
 
 
@@ -69,6 +80,8 @@ def get_rewardest_user(db: Session = Depends(get_db)):
 def get_user_with_max_scores(db: Session = Depends(get_db)):
 
     """Получить пользователя с наибольшим суммой очков достижений."""
+
+    logger.info('Запрос лидера по очкам.')
 
     return crud.get_user_with_max_scores(db=db)
 
@@ -78,6 +91,8 @@ def get_users_with_most_difference(db: Session = Depends(get_db)):
 
     """Получить пользователей с наибольшей разницей очков достижений."""
 
+    logger.info('Запрос пользователей с макмимальной разницей очков.')
+
     return crud.get_users_with_most_difference(db=db)
 
 
@@ -86,6 +101,8 @@ def get_users_with_less_difference(db: Session = Depends(get_db)):
 
     """Получить пользователя с наименьшей разницей очков достижений."""
 
+    logger.info('Запрос пользователей с минимальной разницей очков.')
+
     return crud.get_users_with_less_difference(db=db)
 
 
@@ -93,6 +110,11 @@ def get_users_with_less_difference(db: Session = Depends(get_db)):
 def get_users_rewarded_for_week(db: Session = Depends(get_db)):
 
     """Получить пользователей с семидневной непрерывной серией достижений."""
+
+    logger.info(
+        'Запрос списка пользователей, \
+            которые получали достижения непрерывно в течение недели.'
+        )
 
     return crud.get_users_rewarded_for_week(db=db)
 
@@ -105,11 +127,12 @@ def get_user_rewards(id: int, db: Session = Depends(get_db)):
     user = crud.get_user(db=db, id=id)
 
     if user is None:
+        logger.info('Запрошен несуществующий пользователь.')
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
             detail='Пользователь не найден.'
         )
-    else:
-        user = crud.get_user_rewards(db=db, id=id)
 
-    return user
+    logger.info(f'Запрошены достижения пользователя {user.name}')
+
+    return crud.get_user_rewards(db=db, id=id)
