@@ -7,6 +7,7 @@ from src.dependencies import get_db
 from src.models import Reward, RewardUser
 from src.schemas import RewardAdd, RewardGet, RewardUserAdd, RewardUserGet
 from src.config import SECRET
+from src.logger import logger
 
 router = APIRouter()
 
@@ -21,10 +22,13 @@ def add_reward(
     """Добавить достижение."""
 
     if secret != SECRET:
+        logger.warning('Введён неправильный секретный ключ.')
         raise HTTPException(
             status_code=HTTPStatus.FORBIDDEN,
             detail='Секретный ключ неверный.'
         )
+
+    logger.info('Добавление достижения.')
 
     return crud.add_reward(db=db, reward=reward)
 
@@ -33,6 +37,8 @@ def add_reward(
 def get_rewards(db: Session = Depends(get_db)):
 
     """Добавить список достижений."""
+
+    logger.info('Запрошен список достижений.')
 
     return db.query(Reward).all()
 
@@ -45,10 +51,13 @@ def get_reward(id: int, db: Session = Depends(get_db)):
     reward = crud.get_reward(db=db, id=id)
 
     if reward is None:
+        logger.info('Запрошено несуществующее достижение.')
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
             detail='Достижение не найдено.'
         )
+
+    logger.info(f'Запрос достижения {reward.title}.')
 
     return reward
 
@@ -63,10 +72,13 @@ def reward_user(
     """Выдать пользователю достижение."""
 
     if secret != SECRET:
+        logger.warning('Введён неправильный секретный ключ.')
         raise HTTPException(
             status_code=HTTPStatus.FORBIDDEN,
             detail='Секретный ключ неверный.'
         )
+
+    logger.info('Награждение пользователя.')
 
     return crud.reward_user(db=db, rewarding=rewarding)
 
@@ -75,5 +87,7 @@ def reward_user(
 def get_rewarding_board(db: Session = Depends(get_db)):
 
     """Получить список присвоенных достижений."""
+
+    logger.info('Запрос списка выданных достижений.')
 
     return db.query(RewardUser).all()
