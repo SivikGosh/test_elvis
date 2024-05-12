@@ -3,7 +3,7 @@ from fastapi.responses import RedirectResponse
 
 from src import models
 from src.database import engine
-from src.routers import users
+from src.routers import users, rewards
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -16,4 +16,4 @@ def get_root():
 
 
 app.include_router(users.router, prefix='/users', tags=['Пользователи'])
-app.include_router(users.router, prefix='/rewards', tags=['Достижения'])
+app.include_router(rewards.router, prefix='/rewards', tags=['Достижения'])
