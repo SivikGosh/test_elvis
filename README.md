@@ -5,8 +5,7 @@
 #### Проект является API добавления пользователей, достижений, присваивания достижений пользователям, а также получения данных п пользователях и достижениях по некоторым параметрам.
 
 ### Стек технологий
-<img src="https://img.shields.io/badge/python-%233776AB.svg?style=for-the-badge&logo=Python&logoColor=white" alt="Badge" />
-<img src="https://img.shields.io/badge/fastapi-%23009688.svg?style=for-the-badge&logo=fastapi&logoColor=white" alt="Badge" />
+<img src="https://img.shields.io/badge/python-%233776AB.svg?style=for-the-badge&logo=Python&logoColor=white" alt="Badge" /> <img src="https://img.shields.io/badge/fastapi-%23009688.svg?style=for-the-badge&logo=fastapi&logoColor=white" alt="Badge" />
 <img src="https://img.shields.io/badge/pydantic-%23E92063.svg?style=for-the-badge&logo=pydantic&logoColor=white" alt="Badge" />
 <img src="https://img.shields.io/badge/sqlalchemy-%23D71F00.svg?style=for-the-badge&logo=sqlalchemy&logoColor=white" alt="Badge" />
 <img src="https://img.shields.io/badge/postgresql-%234169E1.svg?style=for-the-badge&logo=postgresql&logoColor=white" alt="Badge" />
@@ -15,9 +14,8 @@
 <img src="https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white" alt="Badge" />
 <img src="https://img.shields.io/badge/gunicorn-%23499848.svg?style=for-the-badge&logo=gunicorn&logoColor=white" alt="Badge" />
 
-
 ### Схема базы данных
-![Модель БД](db.jpg)
+<p align="center"><img src="db.jpg" alt="Badge" /></p>
 
 ## Установка
 
@@ -117,4 +115,44 @@ volumes:
 ## Результаты
 
 ### Пункты
+#### Основные задачи
+    ✔️ предоставлять информацию о пользователе
 
+    ✔️ предоставлять информацию о всех доступных достижениях
+
+    ✔️ добавлять достижения
+
+    ✔️ выдавать достижения пользователю с сохранением времени выдачи (сохранять связь пользователя с достижением и датой выдачи)
+
+    ✔️ предоставлять информацию о выданных пользователю достижениях на выбранном пользователем языке
+
+    ✔️ предоставлять статистические данные системы
+        ✔️ пользователь с максимальным количеством достижений
+        ✔️ пользователь с максимальным количеством очков достижений
+        ✔️ пользователи с максимальной разностью очков достижений
+        ✔️ пользователи с минимальной разностью очков достижений
+        ✔️ пользователи, у которых достижения выдавались 7 дней подряд
+
+#### Опциональные задачи
+    ✔️ составить docker compose файл для развертывания сервера и всех его компонентов(к примеру, СУБД)
+
+    ✔️ одним из компонентов развертывания должен быть сервер nginx через который организует reverse proxy доступ к серверу
+  
+    ✔️ показать навыки оформления проекта
+        ✔️ комментарии к функциям
+        ✔️ логирование
+        ✔️ написание read.me
+
+    ▪︎ сделать front-end для работы с сервером (интерфейс к одной или нескольким функциям, например для добавления достижения или вывода достижений пользователя по его имени)
+
+    ▪︎ показать умение работать с историей git
+
+    ▪︎ показать умение составления документации (например, оформить описание внешних интерфейсов сервера)
+
+    ▪︎ проявить фантазию в именовании достижений и их описании
+
+    ▪︎ показать умение тестировать разработанный код
+
+### Адрес итогового проекта
+
+#### Проект развёрнут на рабочем сервере и доступен по адресу: http://eventfun.ru:7000/
