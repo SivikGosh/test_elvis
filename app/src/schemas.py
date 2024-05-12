@@ -69,10 +69,10 @@ class MaxScoreUser(BaseModel):
 
 
 class MostDifference(BaseModel):
-    user_max: UserGet
-    user_max_score: int
-    user_min: UserGet
-    user_min_score: int
+    max_user: UserGet
+    max_scores: int
+    min_user: UserGet
+    min_scores: int
     difference: int
 
 

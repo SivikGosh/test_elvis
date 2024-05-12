@@ -1,14 +1,18 @@
 from datetime import timedelta
 
+import mtranslate
 from sqlalchemy import func
 from sqlalchemy.orm import Session
-import mtranslate
 
-from src import models, schemas
+from src.models import Reward, RewardUser, User
+from src.schemas import RewardAdd, RewardUserAdd, UserAdd
 
 
-def add_user(db: Session, user: schemas.UserAdd):
-    user = models.User(name=user.name, language=user.language)
+def add_user(db: Session, user: UserAdd):
+    user = User(
+        name=user.name,
+        language=user.language
+    )
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -16,12 +20,15 @@ def add_user(db: Session, user: schemas.UserAdd):
 
 
 def get_user(db: Session, id: int):
-    return db.query(models.User).filter(models.User.id == id).first()
+    user = db.query(User).filter_by(id=id).first()
+    return user
 
 
-def add_reward(db: Session, reward: schemas.RewardAdd):
-    reward = models.Reward(
-        title=reward.title, score=reward.score, description=reward.description
+def add_reward(db: Session, reward: RewardAdd):
+    reward = Reward(
+        title=reward.title,
+        score=reward.score,
+        description=reward.description
     )
     db.add(reward)
     db.commit()
@@ -30,11 +37,15 @@ def add_reward(db: Session, reward: schemas.RewardAdd):
 
 
 def get_reward(db: Session, id: int):
-    return db.query(models.Reward).filter(models.Reward.id == id).first()
+    reward = db.query(Reward).filter_by(id=id).first()
+    return reward
 
 
-def reward_user(db: Session, rewarding: schemas.RewardUserAdd):
-    rewarding = models.RewardUser(user=rewarding.user, reward=rewarding.reward)
+def reward_user(db: Session, rewarding: RewardUserAdd):
+    rewarding = RewardUser(
+        user=rewarding.user,
+        reward=rewarding.reward
+    )
     db.add(rewarding)
     db.commit()
     db.refresh(rewarding)
@@ -43,82 +54,88 @@ def reward_user(db: Session, rewarding: schemas.RewardUserAdd):
 
 def get_rewardest_user(db: Session):
     rewardest = (
-        db.query(models.RewardUser.user, func.count(models.RewardUser.reward))
-        .group_by(models.RewardUser.user)
-        .order_by(func.count(models.RewardUser.reward).desc())
+        db.query(RewardUser.user, func.count(RewardUser.reward))
+        .group_by(RewardUser.user)
+        .order_by(func.count(RewardUser.reward).desc())
         .first()
     )
     user, rewards = rewardest
-    user = db.query(models.User).filter(models.User.id == user).first()
-    return user, rewards
+    user = db.query(User).filter_by(id=user).first()
+    result = {'user': user, 'rewards': rewards}
+    return result
 
 
 def get_user_with_max_scores(db: Session):
     max_scores = (
-        db.query(models.RewardUser.user, func.sum(models.Reward.score))
-        .join(models.Reward, models.RewardUser.reward == models.Reward.id)
-        .group_by(models.RewardUser.user)
-        .order_by(func.sum(models.Reward.score).desc())
+        db.query(RewardUser.user, func.sum(Reward.score))
+        .join(Reward, RewardUser.reward == Reward.id)
+        .group_by(RewardUser.user)
+        .order_by(func.sum(Reward.score).desc())
         .first()
     )
     user, scores = max_scores
-    user = db.query(models.User).filter(models.User.id == user).first()
-    return user, scores
+    user = db.query(User).filter_by(id=user).first()
+    result = {'user': user, 'scores': scores}
+    return result
 
 
 def get_user_with_min_scores(db: Session):
     min_scores = (
-        db.query(models.RewardUser.user, func.sum(models.Reward.score))
-        .join(models.Reward, models.RewardUser.reward == models.Reward.id)
-        .group_by(models.RewardUser.user)
-        .order_by(func.sum(models.Reward.score).asc())
+        db.query(RewardUser.user, func.sum(Reward.score))
+        .join(Reward, RewardUser.reward == Reward.id)
+        .group_by(RewardUser.user)
+        .order_by(func.sum(Reward.score).asc())
         .first()
     )
     user, scores = min_scores
-    user = db.query(models.User).filter(models.User.id == user).first()
-    return user, scores
+    user = db.query(User).filter_by(id=user).first()
+    result = {'user': user, 'scores': scores}
+    return result
 
 
 def get_users_with_most_difference(db: Session):
-    user_max, score_max = get_user_with_max_scores(db)
-    user_min, score_min = get_user_with_min_scores(db)
-    difference = score_max - score_min
-    return user_max, score_max, user_min, score_min, difference
+    max_user = get_user_with_max_scores(db)
+    min_user = get_user_with_min_scores(db)
+    difference = max_user['scores'] - min_user['scores']
+    max_user['max_user'] = max_user.pop('user')
+    max_user['max_scores'] = max_user.pop('scores')
+    min_user['min_user'] = min_user.pop('user')
+    min_user['min_scores'] = min_user.pop('scores')
+    result = {**max_user, **min_user}
+    result['difference'] = difference
+    return result
 
 
 def get_users_with_less_difference(db: Session):
     users = (
-        db.query(models.RewardUser.user, func.sum(models.Reward.score))
-        .join(models.Reward, models.RewardUser.reward == models.Reward.id)
-        .group_by(models.RewardUser.user)
-        .order_by(func.sum(models.Reward.score).desc())
+        db.query(RewardUser.user, func.sum(Reward.score))
+        .join(Reward, RewardUser.reward == Reward.id)
+        .group_by(RewardUser.user)
+        .order_by(func.sum(Reward.score).desc())
         .limit(2)
     )
     first_user, first_user_scores = users.first()
     second_user, second_user_scores = users.offset(1).first()
     difference = first_user_scores - second_user_scores
-    first_user = (
-        db.query(models.User).filter(models.User.id == first_user).first()
-    )
-    second_user = (
-        db.query(models.User).filter(models.User.id == second_user).first()
-    )
-    return (
-        first_user,
-        first_user_scores,
-        second_user,
-        second_user_scores,
-        difference
-    )
+    first_user = (db.query(User).filter_by(id=first_user).first())
+    second_user = (db.query(User).filter_by(id=second_user).first())
+    result = {
+        'first_user': first_user,
+        'first_user_scores': first_user_scores,
+        'second_user': second_user,
+        'second_user_scores': second_user_scores,
+        'difference': difference
+    }
+    return result
 
 
 def get_users_rewarded_for_week(db: Session):
     query = (
         db.query(
-            models.RewardUser.user,
-            func.array_agg(func.DATE(models.RewardUser.gave_at).distinct())
+            RewardUser.user,
+            func.array_agg(func.DATE(RewardUser.gave_at).distinct())
         )
-        .group_by(models.RewardUser.user)
+        .group_by(RewardUser.user)
         .all()
     )
     users = []
@@ -132,19 +149,21 @@ def get_users_rewarded_for_week(db: Session):
             if count == 7:
                 break
         if count >= 7:
-            user = db.query(models.User).filter(models.User.id == user).first()
+            user = db.query(User).filter_by(id=user).first()
             users.append(user)
     return users
 
 
 def get_user_rewards(db: Session, id: int):
-    query = (
-        db.query(models.Reward)
-        .join(models.RewardUser, models.RewardUser.reward == models.Reward.id)
-        .filter(models.RewardUser.user == id).all()
+    rewards = (
+        db.query(Reward)
+        .join(RewardUser, RewardUser.reward == Reward.id)
+        .filter(RewardUser.user == id).all()
     )
-    lang = db.query(models.User.language).filter(models.User.id == id).first()
-    for i in query:
-        i.title = mtranslate.translate(i.title, lang[0])
-        i.description = mtranslate.translate(i.description, lang[0])
-    return query
+    language = db.query(User.language).filter_by(id=id).first()
+    for reward in rewards:
+        reward.title = mtranslate.translate(reward.title, language[0])
+        reward.description = mtranslate.translate(
+            reward.description, language[0]
+        )
+    return rewards
