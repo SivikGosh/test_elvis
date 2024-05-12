@@ -25,6 +25,13 @@ def add_user(user: UserAdd, db: Session = Depends(get_db), secret: str = None):
 
     """Добавить пользователя."""
 
+    if secret is None:
+        logger.warning('Не введён секретный ключ. (?secret=)')
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN,
+            detail='Не введён секретный ключ.'
+        )
+
     if secret != SECRET:
         logger.warning('Введён неправильный секретный ключ.')
         raise HTTPException(

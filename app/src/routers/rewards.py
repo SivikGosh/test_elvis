@@ -21,6 +21,13 @@ def add_reward(
 
     """Добавить достижение."""
 
+    if secret is None:
+        logger.warning('Не введён секретный ключ. (?secret=)')
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN,
+            detail='Не введён секретный ключ.'
+        )
+
     if secret != SECRET:
         logger.warning('Введён неправильный секретный ключ.')
         raise HTTPException(
@@ -70,6 +77,13 @@ def reward_user(
 ):
 
     """Выдать пользователю достижение."""
+
+    if secret is None:
+        logger.warning('Не введён секретный ключ. (?secret=)')
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN,
+            detail='Не введён секретный ключ.'
+        )
 
     if secret != SECRET:
         logger.warning('Введён неправильный секретный ключ.')
